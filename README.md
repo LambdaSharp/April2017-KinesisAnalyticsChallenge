@@ -17,20 +17,29 @@ In this challenge we're going to learn how to trigger an [AWS Lambda](https://aw
 ## Level 0: Use the client app in the repository, to submit data to your input Kinesis Stream
 In the [repository](https://github.com/LambdaSharp/April2017-KinesisAnalyticsChallenge), find the client directory, modify it to write to your Kinesis Stream and start submitting XML data.
 
-** ACCEPTANCE TEST:*** You see traffic coming through in your Kinesis Stream
+** ACCEPTANCE TEST:** You see traffic coming through in your Kinesis Stream
 
 ## Level 1: Hook up a Lambda function to your input Kinesis Stream, and transform the received XML data to CSV data
 In the [repository](https://github.com/LambdaSharp/April2017-KinesisAnalyticsChallenge), find the `xml2csv` lambda function, and modify it to transform the data from XML to CSV.
 
+** ACCEPTANCE TEST:** You see invocations of your Lambda function.
+
 ## Level 2: Push the csv records to a new Kinesis Stream that will be consumed by Kinesis Analytics
 Since Kinesis Analytics works with CSV, push the transformed data to that new stream
+
+** ACCEPTANCE TEST:** You see data coming through on your csv destination Kinesis Stream.
 
 ## Level 3: Create a Kinesis Analytics App with the CSV based Kinesis Stream as input
 Go to the AWS Console in the Kinesis Analytics section and create an application, set its input to the Kinesis Stream that is carrying CSV data, and make the Kinesis Analytics App identify its schema.
 
+** ACCEPTANCE TEST:** You create a Kinesis Analytics App, and your csv based Kinesis Stream is configured as its input.
+
 ## Level 4: Make your Kinesis Analytics App analyze its input Kinesis Stream such that you can find the Top 5 API calls in a 30 seconds window.
 Write Kinesis Analytics SQL to find the 5 most popular API calls during 30 second windows.
 
+** ACCEPTANCE TEST:** You can operate on the API calls metrics with SQL in your Kinesis Analytics app, and you create the right output streams and pumps to be able to compute the top 5 most called API methods.
 
 ## Boss Level: Detect abnormal API calls that take too long.
 Modify your Kinesis Analytics App to be able to detect abnormally slow API calls.
+
+** ACCEPTANCE TEST:** You can see the most anomalous calls in descending order.
