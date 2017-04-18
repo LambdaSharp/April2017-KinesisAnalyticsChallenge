@@ -1,0 +1,2 @@
+
+Client XML -> Kinesis Stream -> Lambda Transform to CSV -> Kinesis Stream -> Kinesis Analytics -> SQL -> Kinesis Stream

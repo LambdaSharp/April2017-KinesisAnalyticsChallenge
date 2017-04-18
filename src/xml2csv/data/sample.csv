@@ -1,0 +1,7 @@
+method-name, elapsed-ms
+CreateRepos, 4667
+GetRepo, 7656
+EditRepo, 1235
+GetRepoContributors, 1235
+GetRepoLanguages, 432
+GetRepoTeams, 123
