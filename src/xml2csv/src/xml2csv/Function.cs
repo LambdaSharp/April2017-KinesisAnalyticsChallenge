@@ -31,12 +31,7 @@ namespace xml2csv {
             var rows = new List<string>();
 
             foreach (var record in kinesisEvent.Records) {
-                context.Logger.LogLine($"Event ID: {record.EventId}");
-                context.Logger.LogLine($"Event Name: {record.EventName}");
-
                 string recordData = GetRecordContents(record.Kinesis);
-                context.Logger.LogLine($"Record Data:");
-                context.Logger.LogLine(recordData);
                 var doc = XElement.Parse(recordData);
                 var row = string.Join(",", new [] {
                     doc.Element("method-name")?.Value,
@@ -44,7 +39,6 @@ namespace xml2csv {
                     doc.Element("timestamp")?.Value,
                     doc.Element("customer-id")?.Value
                 });
-                context.Logger.LogLine($"row={row}");                
                 rows.Add(row);
             }
             var skip = 0;
