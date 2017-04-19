@@ -27,7 +27,8 @@ namespace xml2csv {
         //--- Methods ---
         public void FunctionHandler(KinesisEvent kinesisEvent, ILambdaContext context) {
             context.Logger.LogLine($"Beginning to process {kinesisEvent.Records.Count} records...");
-            var streamName = "YOUR STREAM NAME HERE";
+            var streamName = "YOUR STREAM HERE";
+            var rows = new List<string>();
 
             foreach (var record in kinesisEvent.Records) {
                 context.Logger.LogLine($"Event ID: {record.EventId}");
@@ -36,7 +37,49 @@ namespace xml2csv {
                 string recordData = GetRecordContents(record.Kinesis);
                 context.Logger.LogLine($"Record Data:");
                 context.Logger.LogLine(recordData);
+                var doc = XElement.Parse(recordData);
+                var row = string.Join(",", new [] {
+                    doc.Element("method-name")?.Value,
+                    doc.Element("elapsed-ms")?.Value,
+                    doc.Element("timestamp")?.Value,
+                    doc.Element("customer-id")?.Value
+                });
+                context.Logger.LogLine($"row={row}");                
+                rows.Add(row);
             }
+            var skip = 0;
+            var CHUNK_SIZE = 25;
+            while(true) {
+                var chunk = rows.Skip(skip).Take(CHUNK_SIZE).ToArray();
+                if(!chunk.Any()) {
+                    break;
+                }
+                var t = _klient.PutRecordsAsync(new PutRecordsRequest {
+                    Records = chunk.Select(row => {
+                        using(var m = new MemoryStream(Encoding.UTF8.GetBytes(row + "|"))) {
+                            return new PutRecordsRequestEntry {
+                                Data = m,
+                                PartitionKey = Guid.NewGuid().ToString()
+                            };
+                        }
+                    }).ToList(),
+                    StreamName = streamName
+                }, CancellationToken.None);
+                Task.WaitAll(new [] { t });
+                skip += CHUNK_SIZE;
+                var response = t.Result;
+                if(response.FailedRecordCount > 0) {
+                    foreach(var record in response.Records) {
+                        if(!string.IsNullOrEmpty(record.ErrorCode) || !string.IsNullOrEmpty(record.ErrorMessage)) {
+                            context.Logger.LogLine($"errorCode={record.ErrorCode}, errorMessage={record.ErrorMessage}");
+                        }
+                    }
+                } else {
+                    context.Logger.LogLine($"awsRequestId={context.AwsRequestId}, successfully flushed all the messages");
+                }
+                Thread.Sleep(1000);
+            }
+            context.Logger.LogLine("Stream processing complete.");
         }
 
         private string GetRecordContents(KinesisEvent.Record streamRecord) {
