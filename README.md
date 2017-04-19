@@ -1,5 +1,7 @@
 # Serverless API usage metrics analyzer
 
+Presentation: https://docs.google.com/a/mindtouch.com/presentation/d/1OMnQbf1gFVAMKgd7biBc2hrKIi7LFYdXwwF7SPM2ulk/edit?usp=sharing
+
 In this challenge we're going to learn how to trigger an [AWS Lambda](https://aws.amazon.com/lambda/) function when data is put in [Amazon Kinesis Stream](https://aws.amazon.com/kinesis/). That [AWS Lambda](https://aws.amazon.com/lambda/) function will read the Kinesis stream, decode it, read the XML documents, transform them to be in a CSV format, and forward the data to a new Kinesis stream.
 
 ## Prerequisites
