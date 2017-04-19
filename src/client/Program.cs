@@ -23,8 +23,6 @@ namespace LambdaSharp.Client {
             var streamName = args[0];
             var count = Environment.ProcessorCount;
             Console.WriteLine($"processorCount={Environment.ProcessorCount}, streamName={streamName}, producersCount={count}");
-            var random = new Random((int)DateTime.UtcNow.Ticks);
-            var randomTime = new Random((int)DateTime.UtcNow.Ticks);
             var methodNames = new [] {
                 "GetUserRepos",
                 "GetOrgRepos",
@@ -59,6 +57,8 @@ namespace LambdaSharp.Client {
             for(var i = 0; i < count; i++) {
                 var ii = i;
                 tasks[ii] = Task.Factory.StartNew(async x => {
+                    var random = new Random((int)DateTime.UtcNow.Ticks);
+                    var randomTime = new Random((int)DateTime.UtcNow.Ticks);
                     // Console.WriteLine($"Creating task {ii}");
                     var randomMethod = new Random((int)DateTime.UtcNow.Ticks + random.Next(1, 500000));
                     var customerIdGenerator = new Random((int)DateTime.UtcNow.Ticks);
